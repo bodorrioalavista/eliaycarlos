@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Foto de ejemplo de espaldas">
+  <rect width="800" height="1000" fill="#57d7c7"/>
+  <rect y="650" width="800" height="350" fill="#101114"/>
+  <circle cx="400" cy="265" r="125" fill="#33211f"/>
+  <path d="M260 330c54 88 225 88 280 0v245H260z" fill="#33211f"/>
+  <path d="M235 570c44-98 286-98 330 0l70 430H165z" fill="#f3eee6"/>
+  <path d="M300 590h200l34 410H266z" fill="#ff6b5f"/>
+  <text x="400" y="930" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#fff">Sustituir por foto real</text>
+</svg>

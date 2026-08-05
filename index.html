@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>La caja fuerte de la boda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="status-panel" aria-label="Progreso del juego">
+        <div class="brand-block">
+          <p>Elia & Carlos</p>
+          <h1>Operación caja fuerte</h1>
+        </div>
+
+        <div class="vault-card" aria-hidden="true">
+          <div class="vault-screen">
+            <span id="stepKicker">Entrada</span>
+            <strong id="progressText">0 / 4</strong>
+          </div>
+          <div class="vault-ring">
+            <div class="vault-core">
+              <span></span>
+            </div>
+          </div>
+          <div class="code-slots" id="codeSlots">
+            <span>?</span>
+            <span>?</span>
+            <span>?</span>
+            <span>?</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="game-panel" aria-live="polite">
+        <div class="screen active" data-screen="intro">
+          <p class="eyebrow">Juego privado</p>
+          <h2>Para conseguir el código hay que demostrar memoria de grupo.</h2>
+          <p class="lead">
+            Hay dos pruebas: primero, asignar 11 frases a la amiga correcta. Despues,
+            reconocer fotos dificiles con zoom, recortes o de espaldas.
+          </p>
+          <div class="mission-list">
+            <span>01 Frases sospechosas</span>
+            <span>02 Fotos casi imposibles</span>
+            <span>03 Codigo final</span>
+          </div>
+          <button class="primary-action" type="button" data-next="ready">
+            Empezar
+          </button>
+        </div>
+
+        <div class="screen" data-screen="ready">
+          <p class="eyebrow">Control de acceso</p>
+          <h2>¿Estáis preparados?</h2>
+          <p class="lead">
+            Si el equipo está listo, responded a la pregunta clave y entrad en modo investigación.
+          </p>
+          <form id="readyForm" class="stack-form">
+            <label for="readyAnswer">¿Estáis preparados?</label>
+            <input id="readyAnswer" name="readyAnswer" autocomplete="off" />
+            <p class="feedback" id="readyFeedback"></p>
+            <button class="primary-action" type="submit">Estamos listos</button>
+          </form>
+        </div>
+
+        <div class="screen" data-screen="quoteQuiz">
+          <p class="eyebrow">Prueba 1</p>
+          <h2>¿De quién es cada frase?</h2>
+          <p class="lead">
+            Elegid una amiga para cada frase. Cuando todas estén bien, se desbloquea
+            la prueba de fotos.
+          </p>
+
+          <form id="quoteQuizForm" class="quote-form"></form>
+
+          <div class="actions-row">
+            <button class="secondary-action" type="button" id="resetQuoteAnswers">Limpiar</button>
+            <button class="primary-action" type="submit" form="quoteQuizForm">Comprobar</button>
+          </div>
+          <p class="feedback" id="quoteFeedback"></p>
+        </div>
+
+        <div class="screen" data-screen="photoQuiz">
+          <p class="eyebrow">Prueba 2</p>
+          <h2>¿Quien aparece en la foto?</h2>
+          <p class="lead">
+            Fotos con zoom, recortadas o de espaldas. Si acertais todas, aparece el codigo.
+          </p>
+
+          <form id="photoQuizForm" class="photo-form"></form>
+
+          <div class="actions-row">
+            <button class="secondary-action" type="button" id="resetPhotoAnswers">Limpiar</button>
+            <button class="primary-action" type="submit" form="photoQuizForm">Comprobar</button>
+          </div>
+          <p class="feedback" id="photoFeedback"></p>
+        </div>
+
+        <div class="screen" data-screen="final">
+          <p class="eyebrow">Caja abierta</p>
+          <h2>El codigo es</h2>
+          <div class="final-code" id="finalCode">0000</div>
+          <p class="lead">
+            Ya podeis abrir la caja fuerte. Mision cumplida.
+          </p>
+          <button class="secondary-action" type="button" id="playAgain">Volver a jugar</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

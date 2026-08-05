@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Foto de ejemplo recortada">
+  <defs>
+    <linearGradient id="g" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#101114"/>
+      <stop offset="1" stop-color="#57d7c7"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#g)"/>
+  <circle cx="310" cy="310" r="130" fill="#4b2d24"/>
+  <circle cx="330" cy="340" r="82" fill="#e9b996"/>
+  <path d="M155 560c58-116 292-116 350 0l58 440H97z" fill="#c8ff4d"/>
+  <path d="M0 0h370v1000H0z" fill="#f3eee6" opacity=".38"/>
+  <text x="400" y="930" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#fff">Sustituir por foto real</text>
+</svg>

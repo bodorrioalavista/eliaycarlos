@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Foto de ejemplo de detalle">
+  <rect width="800" height="1000" fill="#f3eee6"/>
+  <circle cx="565" cy="290" r="185" fill="#101114"/>
+  <circle cx="545" cy="275" r="92" fill="#f0bfa1"/>
+  <path d="M375 500c78-136 295-136 372 0v500H375z" fill="#8f7cff"/>
+  <path d="M0 0h800v1000H0z" fill="none" stroke="#c8ff4d" stroke-width="40"/>
+  <text x="400" y="930" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#101114">Sustituir por foto real</text>
+</svg>

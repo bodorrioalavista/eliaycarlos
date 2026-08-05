@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Foto de ejemplo con zoom">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff6b5f"/>
+      <stop offset="0.55" stop-color="#8f7cff"/>
+      <stop offset="1" stop-color="#101114"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <circle cx="410" cy="285" r="145" fill="#2d1b1a"/>
+  <circle cx="365" cy="305" r="78" fill="#f2c4a7"/>
+  <circle cx="455" cy="305" r="78" fill="#f2c4a7"/>
+  <rect x="260" y="420" width="300" height="430" rx="150" fill="#c8ff4d"/>
+  <path d="M210 720c100 80 310 78 420-5v285H210z" fill="#15171b" opacity=".85"/>
+  <text x="400" y="928" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#fff">Sustituir por foto real</text>
+</svg>
