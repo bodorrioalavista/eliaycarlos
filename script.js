@@ -54,32 +54,88 @@ const gameConfig = {
   ],
   photoQuestions: [
     {
-      image: "assets/foto-01.svg",
-      clue: "Zoom",
+      image: "assets/Ane.jpg",
+      clue: "Txupao",
       focus: "50% 18%",
-      zoom: 1.7,
-      answer: "Marta"
+      zoom: 1,
+      answer: "Ane"
     },
     {
-      image: "assets/foto-02.svg",
-      clue: "De espaldas",
+      image: "assets/Elia.jpg",
+      clue: "0 dudas",
       focus: "50% 42%",
-      zoom: 1.25,
-      answer: "Laura"
+      zoom: 1,
+      answer: "Elia"
     },
     {
-      image: "assets/foto-03.svg",
-      clue: "Detalle",
+      image: "assets/Naroa.jpg",
+      clue: "Regalito",
       focus: "68% 34%",
-      zoom: 1.85,
-      answer: "Irene"
+      zoom: 1,
+      answer: "Naroa"
     },
     {
-      image: "assets/foto-04.svg",
-      clue: "Recorte",
+      image: "assets/Amaia.jpg",
+      clue: "Fácil",
       focus: "35% 45%",
-      zoom: 1.55,
-      answer: "Nerea"
+      zoom: 1,
+      answer: "Amaia"
+    },
+    {
+      image: "assets/Carmen.jpg",
+      clue: "Muy fácil",
+      focus: "48% 35%",
+      zoom: 1,
+      answer: "Carmen"
+    },
+    {
+      image: "assets/Elena.jpg",
+      clue: "Se tuerce",
+      focus: "50% 18%",
+      zoom: 1,
+      answer: "Elena"
+    },
+    {
+      image: "assets/Izaskun.jpg",
+      clue: "Por descarte",
+      focus: "60% 24%",
+      zoom: 2,
+      answer: "Izaskun"
+    },
+    {
+      image: "assets/Lorea.jpg",
+      clue: "Se ríe",
+      focus: "42% 40%",
+      zoom: 1,
+      answer: "Lorea"
+    },
+    {
+      image: "assets/Nuria.jpg",
+      clue: "Torci",
+      focus: "70% 52%",
+      zoom: 1,
+      answer: "Nuria"
+    },
+    {
+      image: "assets/Paula.jpg",
+      clue: "Joven",
+      focus: "30% 30%",
+      zoom: 1,
+      answer: "Paula"
+    },
+    {
+      image: "assets/Sandra.jpg",
+      clue: "Muy fácil",
+      focus: "50% 58%",
+      zoom: 1,
+      answer: "Sandra"
+    },
+    {
+      image: "assets/Tamara.jpg",
+      clue: "A pensar",
+      focus: "58% 38%",
+      zoom: 1,
+      answer: "Tamara"
     }
   ]
 };
@@ -256,6 +312,7 @@ readyForm.addEventListener("submit", (event) => {
 
 quoteQuizForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  //const correctCount = gameConfig.quoteQuestions.length;
   const correctCount = checkAnswers(quoteQuizForm, gameConfig.quoteQuestions, ".question-row");
 
   if (correctCount === gameConfig.quoteQuestions.length) {
