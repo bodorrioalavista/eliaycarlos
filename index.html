@@ -23,7 +23,7 @@
         <div class="vault-card" aria-hidden="true">
           <div class="vault-screen">
             <span id="stepKicker">Entrada</span>
-            <strong id="progressText">0 / 4</strong>
+            <strong id="progressText">0 / 5</strong>
           </div>
           <div class="vault-ring">
             <div class="vault-core">
@@ -42,15 +42,17 @@
       <section class="game-panel" aria-live="polite">
         <div class="screen active" data-screen="intro">
           <p class="eyebrow">Juego privado</p>
-          <h2>Para conseguir el código hay que demostrar memoria de grupo.</h2>
+          <h2>Para conseguir el código hay que demostrar conocimiento de grupo.</h2>
           <p class="lead">
-            Hay dos pruebas: primero, asignar 11 frases a la amiga correcta. Despues,
-            reconocer fotos dificiles con zoom, recortes o de espaldas.
+            Hay tres pruebas: primero, tendréis que asignar el nombre de la amiga correspondiente a cada frase. Después,
+            reconocer fotos difíciles con zoom, recortes o de espaldas. Al final,
+            Charli tendrá que demostrar cuánto conoce a Elia.
           </p>
           <div class="mission-list">
-            <span>01 Frases sospechosas</span>
+            <span>01 Frases de amigas</span>
             <span>02 Fotos casi imposibles</span>
-            <span>03 Codigo final</span>
+            <span>03 Examen Charli</span>
+            <span>04 Código final</span>
           </div>
           <button class="primary-action" type="button" data-next="ready">
             Empezar
@@ -61,7 +63,7 @@
           <p class="eyebrow">Control de acceso</p>
           <h2>¿Estáis preparados?</h2>
           <p class="lead">
-            Si el equipo está listo, responded a la pregunta clave y entrad en modo investigación.
+            Si creéis que ya estáis listos, responded a la pregunta clave y entrad en modo investigación.
           </p>
           <form id="readyForm" class="stack-form">
             <label for="readyAnswer">¿Estáis preparados?</label>
@@ -76,7 +78,7 @@
           <h2>¿De quién es cada frase?</h2>
           <p class="lead">
             Elegid una amiga para cada frase. Cuando todas estén bien, se desbloquea
-            la prueba de fotos.
+            la prueba de fotos. Suerte amigos!
           </p>
 
           <form id="quoteQuizForm" class="quote-form"></form>
@@ -90,11 +92,12 @@
 
         <div class="screen" data-screen="photoQuiz">
           <p class="eyebrow">Prueba 2</p>
-          <h2>¿Quien aparece en la foto?</h2>
+          <h2>¿Quién aparece en la foto?</h2>
           <p class="lead">
-            En todas estas fotos aparece Elia, asi que toca hacer memoria. Algunas estan
-            con zoom, recortadas, de espaldas o bastante pixeladas: lo sentimos por la calidad.
-            Si acertais todas, aparece el codigo.
+            Algunas fotos estan con zoom, recortadas, de espaldas o bastante pixeladas:
+            lo sentimos por la calidad. Tantos años siendo amigas... no esperéis que
+            todas sean actuales. Elia, habéis visto cómo creciamos, así que deberías saber
+            las respuestas muy facilmente. Si falláis, puede que en el siguiente intento haya alguna pista. O no. Quién sabe.
           </p>
 
           <form id="photoQuizForm" class="photo-form"></form>
@@ -106,12 +109,30 @@
           <p class="feedback" id="photoFeedback"></p>
         </div>
 
+        <div class="screen" data-screen="eliaQuiz">
+          <p class="eyebrow">Prueba 3</p>
+          <h2>Turno de Charli</h2>
+          <p class="lead">
+            Esta prueba tiene que responderla Charli. No juguéis con esto: tenemos
+            herramientas para saber si es el quien contesta. Cada pregunta acepta más de una respuesta válida, 
+            y si falla alguna puede que aparezcan pistas. O no. Quién sabe.
+          </p>
+
+          <form id="eliaQuizForm" class="elia-form"></form>
+
+          <div class="actions-row">
+            <button class="secondary-action" type="button" id="resetEliaAnswers">Limpiar</button>
+            <button class="primary-action" type="submit" form="eliaQuizForm">Aceptar</button>
+          </div>
+          <p class="feedback" id="eliaFeedback"></p>
+        </div>
+
         <div class="screen" data-screen="final">
           <p class="eyebrow">Caja abierta</p>
           <h2>El codigo es</h2>
           <div class="final-code" id="finalCode">0000</div>
           <p class="lead">
-            Ya podeis abrir la caja fuerte. Mision cumplida.
+            Ya podéis abrir la caja fuerte. Misión cumplida. ZORIONAK BIKOTE!!!! 
           </p>
           <button class="secondary-action" type="button" id="playAgain">Volver a jugar</button>
         </div>

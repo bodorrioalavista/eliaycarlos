@@ -1,6 +1,6 @@
 const gameConfig = {
   finalCode: "2749",
-  readinessWords: ["ferri baietz"],
+  readinessWords: ["ferry baietz"],
   friends: ["Elia", "Tamara", "Elena", "Sandra", "Amaia", "Izaskun", "Ane", "Carmen", "Lorea", "Nuria", "Naroa", "Paula"],
   quoteQuestions: [
     {
@@ -137,6 +137,58 @@ const gameConfig = {
       zoom: 1,
       answer: "Tamara"
     }
+  ],
+  eliaQuestions: [
+    {
+      text: "Cuando Elia tiene una idea clara, ¿cómo suele reaccionar?",
+      answers: ["se empeña", "insiste", "es cabezona", "cabezona"],
+      hint: "Pista: piensa en cuando se le mete algo en la cabeza."
+    },
+    {
+      text: "¿Qué necesita Elia para quedarse tranquila cuando algo importa?",
+      answers: ["tenerlo controlado", "organizarlo", "tenerlo todo organizado", "tenerlo todo controlado", "orden"],
+      hint: "Pista: no le basta con cruzar los dedos; necesita orden."
+    },
+    {
+      text: "¿Qué tipo de planes le hacen especial ilusión?",
+      answers: ["planes con familia", "planes con Paul", "planes con amigas", "planes con gente que quiere"],
+      hint: "Pista: los planes importan mas por la compania que por el sitio. Planes con..."
+    },
+    {
+      text: "¿Qué herramienta de Microsoft Office le encanta a Elia?",
+      answers: ["Excel", "Microsoft Excel"],
+      hint: "Pista: lo de las celdas y fórmulas no es lo suyo..."
+    },
+    {
+      text: "¿Qué es lo que más enfada a Elia en un plan?",
+      answers: ["no saber dónde comer", "no tener comida a su alcance", "no comer", "tener hambre"],
+      hint: "Pista: lo de que las tripas saquen ruido no va con ella."
+    },
+    {
+      text: "¿Cómo se iba a llamar su primera mascota? (nunca llegó)",
+      answers: ["Fermin", "Fermín"],
+      hint: "Pista: Imanol ya le llamaba así, y aunque no existiese la mascota, el nombre sí. Venga va, te dejamos que se lo preguntes a Elia."
+    },
+    {
+      text: "¿Qué conclusión sacaríamos sobre Elia en una barbacoa? (basado en hechos reales)",
+      answers: ["no es vegetariana", "que no es vegetariana"],
+      hint: "Pista: sabemos qué no es cuando hay tanta carne de por medio."
+    },
+    {
+      text: "¿Qué plan elegiría Elia un fin de semana que estáis de novios que necesita reírse?",
+      answers: ["ir a impro", "ir a teatro de improvisación", "impro", "teatro de improvisación", "improvisación"],
+      hint: "Pista: es cuestión de improvisar..."
+    },
+    {
+      text: "¿Qué plan no puede faltar un verano?",
+      answers: ["Sonorama", "sonorama", "ir a sonorama", "ir a Sonorama", "festival sonorama", "ir a festival sonorama"],
+      hint: "Pista: es el evento más esperado del año. Y no, no es un plan de verano cualquiera. Música, amigos, buen rollo y calor. ¿Qué más se puede pedir?"
+    },
+    {
+      text: "¿Qué gusta mucho hacer en la familia Barinagarrementeria-Perosanz?",
+      answers: ["vendimiar", "ir a vendimiar", "ir a la vendimia", "vendimia"],
+      hint: "Pista: el lugar del evento es Castrillo de la Vega. ¿Qué es lo que gusta hacer aquí en una epoca concreta del año?"
+    }
   ]
 };
 
@@ -152,17 +204,22 @@ const resetQuoteAnswers = document.querySelector("#resetQuoteAnswers");
 const photoQuizForm = document.querySelector("#photoQuizForm");
 const photoFeedback = document.querySelector("#photoFeedback");
 const resetPhotoAnswers = document.querySelector("#resetPhotoAnswers");
+const eliaQuizForm = document.querySelector("#eliaQuizForm");
+const eliaFeedback = document.querySelector("#eliaFeedback");
+const resetEliaAnswers = document.querySelector("#resetEliaAnswers");
 const finalCode = document.querySelector("#finalCode");
 const codeSlots = document.querySelector("#codeSlots");
 const playAgain = document.querySelector("#playAgain");
 let readyAttempts = 0;
+let photoAttempts = 0;
 
 const screenMeta = {
-  intro: ["Entrada", "0 / 4"],
-  ready: ["Acceso", "1 / 4"],
-  quoteQuiz: ["Prueba 1", "2 / 4"],
-  photoQuiz: ["Prueba 2", "3 / 4"],
-  final: ["Codigo", "4 / 4"]
+  intro: ["Entrada", "0 / 5"],
+  ready: ["Acceso", "1 / 5"],
+  quoteQuiz: ["Prueba 1", "2 / 5"],
+  photoQuiz: ["Prueba 2", "3 / 5"],
+  eliaQuiz: ["Prueba 3", "4 / 5"],
+  final: ["Codigo", "5 / 5"]
 };
 
 function normalize(value) {
@@ -223,7 +280,7 @@ function buildPhotoQuiz() {
               <div
                 class="photo-frame"
                 data-clue="${question.clue}"
-                style="--focus: ${question.focus}; --zoom: ${question.zoom};"
+                style="--focus: ${question.focus}; --zoom: ${currentPhotoZoom(question)};"
               >
                 <img src="${question.image}" alt="Foto misteriosa ${index + 1}" />
               </div>
@@ -242,6 +299,35 @@ function buildPhotoQuiz() {
   `;
 }
 
+function buildEliaQuiz() {
+  eliaQuizForm.innerHTML = gameConfig.eliaQuestions
+    .map(
+      (question, index) => `
+        <article class="question-row open-question" data-index="${index}">
+          <div>
+            <p class="question-text">${index + 1}. ${question.text}</p>
+            <p class="question-result" aria-live="polite"></p>
+          </div>
+          <input name="elia-${index}" autocomplete="off" aria-label="Respuesta ${index + 1}" />
+        </article>
+      `
+    )
+    .join("");
+}
+
+function currentPhotoZoom(question) {
+  return Math.max(1, question.zoom - photoAttempts * 0.18).toFixed(2);
+}
+
+function refreshPhotoZoom() {
+  gameConfig.photoQuestions.forEach((question, index) => {
+    const frame = photoQuizForm.querySelector(`[data-index="${index}"] .photo-frame`);
+    if (frame) {
+      frame.style.setProperty("--zoom", currentPhotoZoom(question));
+    }
+  });
+}
+
 function checkAnswers(form, questions, itemSelector) {
   let correctCount = 0;
 
@@ -254,6 +340,28 @@ function checkAnswers(form, questions, itemSelector) {
     item.classList.toggle("correct", isCorrect);
     item.classList.toggle("wrong", Boolean(select.value) && !isCorrect);
     result.textContent = isCorrect ? "Correcto" : select.value ? "Aun no." : "";
+
+    if (isCorrect) {
+      correctCount += 1;
+    }
+  });
+
+  return correctCount;
+}
+
+function checkEliaAnswers() {
+  let correctCount = 0;
+
+  gameConfig.eliaQuestions.forEach((question, index) => {
+    const item = eliaQuizForm.querySelector(`[data-index="${index}"]`);
+    const input = item.querySelector("input");
+    const result = item.querySelector(".question-result");
+    const answer = normalize(input.value);
+    const isCorrect = question.answers.some((validAnswer) => answer === normalize(validAnswer));
+
+    item.classList.toggle("correct", isCorrect);
+    item.classList.toggle("wrong", Boolean(answer) && !isCorrect);
+    result.textContent = isCorrect ? "Correcto" : answer ? question.hint : "";
 
     if (isCorrect) {
       correctCount += 1;
@@ -312,8 +420,8 @@ readyForm.addEventListener("submit", (event) => {
 
 quoteQuizForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  //const correctCount = gameConfig.quoteQuestions.length;
-  const correctCount = checkAnswers(quoteQuizForm, gameConfig.quoteQuestions, ".question-row");
+  const correctCount = gameConfig.quoteQuestions.length;
+  //const correctCount = checkAnswers(quoteQuizForm, gameConfig.quoteQuestions, ".question-row");
 
   if (correctCount === gameConfig.quoteQuestions.length) {
     quoteFeedback.textContent = "";
@@ -326,16 +434,32 @@ quoteQuizForm.addEventListener("submit", (event) => {
 
 photoQuizForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const correctCount = checkAnswers(photoQuizForm, gameConfig.photoQuestions, ".photo-card");
+  const correctCount = gameConfig.photoQuestions.length;
+  //const correctCount = checkAnswers(photoQuizForm, gameConfig.photoQuestions, ".photo-card");
 
   if (correctCount === gameConfig.photoQuestions.length) {
     photoFeedback.textContent = "";
+    showScreen("eliaQuiz");
+    return;
+  }
+
+  photoAttempts += 1;
+  refreshPhotoZoom();
+  photoFeedback.textContent = `Has acertado ${correctCount} de ${gameConfig.photoQuestions.length}. Mira bien los recortes.`;
+});
+
+eliaQuizForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const correctCount = checkEliaAnswers();
+
+  if (correctCount === gameConfig.eliaQuestions.length) {
+    eliaFeedback.textContent = "";
     revealCode();
     showScreen("final");
     return;
   }
 
-  photoFeedback.textContent = `Has acertado ${correctCount} de ${gameConfig.photoQuestions.length}. Mira bien los recortes.`;
+  eliaFeedback.textContent = `Txarli ha acertado ${correctCount} de ${gameConfig.eliaQuestions.length}. Las pistas estan en las que han fallado.`;
 });
 
 resetQuoteAnswers.addEventListener("click", () => {
@@ -343,15 +467,24 @@ resetQuoteAnswers.addEventListener("click", () => {
 });
 
 resetPhotoAnswers.addEventListener("click", () => {
+  photoAttempts = 0;
   resetFormState(photoQuizForm, photoFeedback, ".photo-card");
+  refreshPhotoZoom();
+});
+
+resetEliaAnswers.addEventListener("click", () => {
+  resetFormState(eliaQuizForm, eliaFeedback, ".question-row");
 });
 
 playAgain.addEventListener("click", () => {
   readyForm.reset();
   readyAttempts = 0;
+  photoAttempts = 0;
   readyFeedback.textContent = "";
   resetFormState(quoteQuizForm, quoteFeedback, ".question-row");
   resetFormState(photoQuizForm, photoFeedback, ".photo-card");
+  resetFormState(eliaQuizForm, eliaFeedback, ".question-row");
+  refreshPhotoZoom();
   codeSlots.querySelectorAll("span").forEach((slot) => {
     slot.textContent = "?";
   });
@@ -360,3 +493,4 @@ playAgain.addEventListener("click", () => {
 
 buildQuoteQuiz();
 buildPhotoQuiz();
+buildEliaQuiz();
