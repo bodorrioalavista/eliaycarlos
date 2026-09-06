@@ -228,6 +228,13 @@ h2 {
   font-weight: 800;
 }
 
+.code-slots span.revealed {
+  color: #090a0c;
+  background: linear-gradient(180deg, #c8ffb1, var(--green));
+  border-color: rgba(200, 255, 177, 0.72);
+  box-shadow: 0 0 24px rgba(150, 224, 114, 0.26);
+}
+
 .game-panel {
   overflow: auto;
   padding: clamp(22px, 4vw, 44px);
@@ -443,6 +450,52 @@ select:focus {
   font-size: 0.72rem;
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.puzzle-stage {
+  width: min(100%, 620px);
+  margin-top: 24px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(245, 174, 63, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(0, 0, 0, 0.24);
+}
+
+.puzzle-board {
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
+  gap: 4px;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid rgba(244, 239, 227, 0.14);
+  border-radius: 8px;
+  background: #090a0c;
+}
+
+.puzzle-piece {
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid rgba(244, 239, 227, 0.2);
+  border-radius: 4px;
+  background-repeat: no-repeat;
+  cursor: grab;
+  transition: transform 160ms ease, border-color 160ms ease, filter 160ms ease;
+}
+
+.puzzle-piece:hover,
+.puzzle-piece.selected {
+  border-color: var(--amber);
+  filter: brightness(1.08);
+  transform: scale(0.985);
+}
+
+.puzzle-piece.dragging {
+  opacity: 0.55;
+  cursor: grabbing;
 }
 
 .question-row.correct,

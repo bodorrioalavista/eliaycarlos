@@ -23,7 +23,7 @@
         <div class="vault-card" aria-hidden="true">
           <div class="vault-screen">
             <span id="stepKicker">Entrada</span>
-            <strong id="progressText">0 / 5</strong>
+            <strong id="progressText">0 / 6</strong>
           </div>
           <div class="vault-ring">
             <div class="vault-core">
@@ -44,15 +44,16 @@
           <p class="eyebrow">Juego privado</p>
           <h2>Para conseguir el código hay que demostrar conocimiento de grupo.</h2>
           <p class="lead">
-            Hay tres pruebas: primero, tendréis que asignar el nombre de la amiga correspondiente a cada frase. Después,
+            Hay cuatro pruebas: primero, tendréis que asignar el nombre de la amiga correspondiente a cada frase. Después,
             reconocer fotos difíciles con zoom, recortes o de espaldas. Al final,
-            Charli tendrá que demostrar cuánto conoce a Elia.
+            Charli tendrá que demostrar cuánto conoce a Elia y resolver el ultimo puzle.
           </p>
           <div class="mission-list">
             <span>01 Frases de amigas</span>
             <span>02 Fotos casi imposibles</span>
             <span>03 Examen Charli</span>
-            <span>04 Código final</span>
+            <span>04 Puzle final</span>
+            <span>05 Código final</span>
           </div>
           <button class="primary-action" type="button" data-next="ready">
             Empezar
@@ -127,14 +128,38 @@
           <p class="feedback" id="eliaFeedback"></p>
         </div>
 
+        <div class="screen" data-screen="puzzleQuiz">
+          <p class="eyebrow">Prueba 4</p>
+          <h2>El puzle final</h2>
+          <p class="lead">
+            Ordenad las piezas para recomponer la foto. Podeis arrastrarlas o tocar
+            dos piezas seguidas para intercambiarlas. Cuando la imagen este completa,
+            se desbloquea el ultimo numero.
+          </p>
+
+          <div class="puzzle-stage">
+            <div id="puzzleBoard" class="puzzle-board" aria-label="Puzle de imagen"></div>
+          </div>
+
+          <div class="actions-row">
+            <button class="secondary-action" type="button" id="shufflePuzzle">Mezclar</button>
+            <button class="primary-action" type="button" id="checkPuzzle">Aceptar</button>
+          </div>
+          <p class="feedback" id="puzzleFeedback"></p>
+        </div>
+
         <div class="screen" data-screen="final">
           <p class="eyebrow">Caja abierta</p>
-          <h2>El codigo es</h2>
+          <h2>El código es</h2>
           <div class="final-code" id="finalCode">0000</div>
           <p class="lead">
             Ya podéis abrir la caja fuerte. Misión cumplida. ZORIONAK BIKOTE!!!! 
+            Estamos seguras de que querréis volver a jugar, así que si queréis intentarlo de nuevo, podéis hacerlo.
+            Si queréis un siguiente nivel, solo tenéis que pedírnoslo. Pero no os lo vamos a poner fácil.
+
           </p>
           <button class="secondary-action" type="button" id="playAgain">Volver a jugar</button>
+          <button class="secondary-action" type="button" id="mierda">Mandar a la mierda a mis amigas</button>
         </div>
       </section>
     </main>

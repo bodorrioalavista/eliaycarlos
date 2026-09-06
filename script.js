@@ -142,12 +142,12 @@ const gameConfig = {
     {
       text: "Cuando Elia tiene una idea clara, ¿cómo suele reaccionar?",
       answers: ["se empeña", "insiste", "es cabezona", "cabezona"],
-      hint: "Pista: piensa en cuando se le mete algo en la cabeza."
+      hint: "Pista: piensa en cuando se le mete algo en la cabeza. Es muy ca..."
     },
     {
       text: "¿Qué necesita Elia para quedarse tranquila cuando algo importa?",
       answers: ["tenerlo controlado", "organizarlo", "tenerlo todo organizado", "tenerlo todo controlado", "orden"],
-      hint: "Pista: no le basta con cruzar los dedos; necesita orden."
+      hint: "Pista: no le basta con cruzar los dedos; necesita or...."
     },
     {
       text: "¿Qué tipo de planes le hacen especial ilusión?",
@@ -156,13 +156,13 @@ const gameConfig = {
     },
     {
       text: "¿Qué herramienta de Microsoft Office le encanta a Elia?",
-      answers: ["Excel", "Microsoft Excel"],
+      answers: ["Excel", "excel", "microsoft excel", "Microsoft Excel"],
       hint: "Pista: lo de las celdas y fórmulas no es lo suyo..."
     },
     {
       text: "¿Qué es lo que más enfada a Elia en un plan?",
       answers: ["no saber dónde comer", "no tener comida a su alcance", "no comer", "tener hambre"],
-      hint: "Pista: lo de que las tripas saquen ruido no va con ella."
+      hint: "Pista: lo de que las tripas saquen ruido no va con ella. No le gusta tener..., y menos cuando hay planes de por medio."
     },
     {
       text: "¿Cómo se iba a llamar su primera mascota? (nunca llegó)",
@@ -172,7 +172,7 @@ const gameConfig = {
     {
       text: "¿Qué conclusión sacaríamos sobre Elia en una barbacoa? (basado en hechos reales)",
       answers: ["no es vegetariana", "que no es vegetariana"],
-      hint: "Pista: sabemos qué no es cuando hay tanta carne de por medio."
+      hint: "Pista: sabemos qué no es cuando hay tanta carne de por medio. No es..."
     },
     {
       text: "¿Qué plan elegiría Elia un fin de semana que estáis de novios que necesita reírse?",
@@ -189,7 +189,12 @@ const gameConfig = {
       answers: ["vendimiar", "ir a vendimiar", "ir a la vendimia", "vendimia"],
       hint: "Pista: el lugar del evento es Castrillo de la Vega. ¿Qué es lo que gusta hacer aquí en una epoca concreta del año?"
     }
-  ]
+  ],
+  puzzle: {
+    image: "assets/puzzle.JPG",
+    rows: 3,
+    columns: 3
+  }
 };
 
 const screens = [...document.querySelectorAll(".screen")];
@@ -207,19 +212,25 @@ const resetPhotoAnswers = document.querySelector("#resetPhotoAnswers");
 const eliaQuizForm = document.querySelector("#eliaQuizForm");
 const eliaFeedback = document.querySelector("#eliaFeedback");
 const resetEliaAnswers = document.querySelector("#resetEliaAnswers");
+const puzzleBoard = document.querySelector("#puzzleBoard");
+const puzzleFeedback = document.querySelector("#puzzleFeedback");
+const shufflePuzzle = document.querySelector("#shufflePuzzle");
+const checkPuzzle = document.querySelector("#checkPuzzle");
 const finalCode = document.querySelector("#finalCode");
 const codeSlots = document.querySelector("#codeSlots");
 const playAgain = document.querySelector("#playAgain");
 let readyAttempts = 0;
 let photoAttempts = 0;
+let selectedPuzzlePiece = null;
 
 const screenMeta = {
-  intro: ["Entrada", "0 / 5"],
-  ready: ["Acceso", "1 / 5"],
-  quoteQuiz: ["Prueba 1", "2 / 5"],
-  photoQuiz: ["Prueba 2", "3 / 5"],
-  eliaQuiz: ["Prueba 3", "4 / 5"],
-  final: ["Codigo", "5 / 5"]
+  intro: ["Entrada", "0 / 6"],
+  ready: ["Acceso", "1 / 6"],
+  quoteQuiz: ["Prueba 1", "2 / 6"],
+  photoQuiz: ["Prueba 2", "3 / 6"],
+  eliaQuiz: ["Prueba 3", "4 / 6"],
+  puzzleQuiz: ["Prueba 4", "5 / 6"],
+  final: ["Codigo", "6 / 6"]
 };
 
 function normalize(value) {
@@ -328,6 +339,81 @@ function refreshPhotoZoom() {
   });
 }
 
+function shuffleValues(values) {
+  const shuffled = [...values];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
+function buildPuzzle() {
+  const { image, rows, columns } = gameConfig.puzzle;
+  const totalPieces = rows * columns;
+  const targets = [...Array(totalPieces).keys()];
+  let positions = shuffleValues(targets);
+
+  if (positions.every((position, index) => position === index)) {
+    positions = [...positions.slice(1), positions[0]];
+  }
+
+  selectedPuzzlePiece = null;
+  puzzleFeedback.textContent = "";
+  puzzleBoard.style.setProperty("--rows", rows);
+  puzzleBoard.style.setProperty("--columns", columns);
+  puzzleBoard.innerHTML = targets
+    .map((target, index) => {
+      const row = Math.floor(target / columns);
+      const column = target % columns;
+      const x = columns === 1 ? 0 : (column / (columns - 1)) * 100;
+      const y = rows === 1 ? 0 : (row / (rows - 1)) * 100;
+
+      return `
+        <button
+          class="puzzle-piece"
+          type="button"
+          draggable="true"
+          data-target="${target}"
+          data-position="${positions[index]}"
+          style="
+            order: ${positions[index]};
+            background-image: url('${image}');
+            background-size: ${columns * 100}% ${rows * 100}%;
+            background-position: ${x}% ${y}%;
+          "
+          aria-label="Pieza ${target + 1}"
+        ></button>
+      `;
+    })
+    .join("");
+}
+
+function swapPuzzlePieces(firstPiece, secondPiece) {
+  const firstPosition = firstPiece.dataset.position;
+  const secondPosition = secondPiece.dataset.position;
+
+  firstPiece.dataset.position = secondPosition;
+  secondPiece.dataset.position = firstPosition;
+  firstPiece.style.order = secondPosition;
+  secondPiece.style.order = firstPosition;
+}
+
+function clearPuzzleSelection() {
+  puzzleBoard.querySelectorAll(".puzzle-piece").forEach((piece) => {
+    piece.classList.remove("selected");
+  });
+  selectedPuzzlePiece = null;
+}
+
+function isPuzzleSolved() {
+  return [...puzzleBoard.querySelectorAll(".puzzle-piece")].every((piece) => {
+    return Number(piece.dataset.position) === Number(piece.dataset.target);
+  });
+}
+
 function checkAnswers(form, questions, itemSelector) {
   let correctCount = 0;
 
@@ -387,6 +473,14 @@ function revealCode() {
   });
 }
 
+function revealCodeDigit(index) {
+  const slot = codeSlots.querySelectorAll("span")[index];
+  if (slot) {
+    slot.textContent = gameConfig.finalCode[index] || "?";
+    slot.classList.add("revealed");
+  }
+}
+
 document.querySelectorAll("[data-next]").forEach((button) => {
   button.addEventListener("click", () => showScreen(button.dataset.next));
 });
@@ -425,6 +519,7 @@ quoteQuizForm.addEventListener("submit", (event) => {
 
   if (correctCount === gameConfig.quoteQuestions.length) {
     quoteFeedback.textContent = "";
+    revealCodeDigit(0);
     showScreen("photoQuiz");
     return;
   }
@@ -439,6 +534,7 @@ photoQuizForm.addEventListener("submit", (event) => {
 
   if (correctCount === gameConfig.photoQuestions.length) {
     photoFeedback.textContent = "";
+    revealCodeDigit(1);
     showScreen("eliaQuiz");
     return;
   }
@@ -450,16 +546,17 @@ photoQuizForm.addEventListener("submit", (event) => {
 
 eliaQuizForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const correctCount = checkEliaAnswers();
+  //const correctCount = checkEliaAnswers();
+  const correctCount = gameConfig.eliaQuestions.length;
 
   if (correctCount === gameConfig.eliaQuestions.length) {
     eliaFeedback.textContent = "";
-    revealCode();
-    showScreen("final");
+    revealCodeDigit(2);
+    showScreen("puzzleQuiz");
     return;
   }
 
-  eliaFeedback.textContent = `Txarli ha acertado ${correctCount} de ${gameConfig.eliaQuestions.length}. Las pistas estan en las que han fallado.`;
+  eliaFeedback.textContent = `Charli ha acertado ${correctCount} de ${gameConfig.eliaQuestions.length}. Las pistas estan en las que han fallado.`;
 });
 
 resetQuoteAnswers.addEventListener("click", () => {
@@ -476,6 +573,77 @@ resetEliaAnswers.addEventListener("click", () => {
   resetFormState(eliaQuizForm, eliaFeedback, ".question-row");
 });
 
+puzzleBoard.addEventListener("dragstart", (event) => {
+  const piece = event.target.closest(".puzzle-piece");
+  if (!piece) {
+    return;
+  }
+
+  event.dataTransfer.setData("text/plain", piece.dataset.target);
+  piece.classList.add("dragging");
+});
+
+puzzleBoard.addEventListener("dragend", () => {
+  puzzleBoard.querySelectorAll(".puzzle-piece").forEach((piece) => {
+    piece.classList.remove("dragging");
+  });
+});
+
+puzzleBoard.addEventListener("dragover", (event) => {
+  if (event.target.closest(".puzzle-piece")) {
+    event.preventDefault();
+  }
+});
+
+puzzleBoard.addEventListener("drop", (event) => {
+  event.preventDefault();
+  const targetPiece = event.target.closest(".puzzle-piece");
+  const draggedTarget = event.dataTransfer.getData("text/plain");
+  const draggedPiece = puzzleBoard.querySelector(`[data-target="${draggedTarget}"]`);
+
+  if (targetPiece && draggedPiece && targetPiece !== draggedPiece) {
+    swapPuzzlePieces(draggedPiece, targetPiece);
+    clearPuzzleSelection();
+  }
+});
+
+puzzleBoard.addEventListener("click", (event) => {
+  const piece = event.target.closest(".puzzle-piece");
+  if (!piece) {
+    return;
+  }
+
+  if (!selectedPuzzlePiece) {
+    selectedPuzzlePiece = piece;
+    piece.classList.add("selected");
+    return;
+  }
+
+  if (selectedPuzzlePiece === piece) {
+    clearPuzzleSelection();
+    return;
+  }
+
+  swapPuzzlePieces(selectedPuzzlePiece, piece);
+  clearPuzzleSelection();
+});
+
+shufflePuzzle.addEventListener("click", () => {
+  buildPuzzle();
+});
+
+checkPuzzle.addEventListener("click", () => {
+  if (isPuzzleSolved()) {
+    puzzleFeedback.textContent = "";
+    revealCodeDigit(3);
+    revealCode();
+    showScreen("final");
+    return;
+  }
+
+  puzzleFeedback.textContent = "Aun no encaja. Revisad las esquinas, los bordes y los detalles de la foto.";
+});
+
 playAgain.addEventListener("click", () => {
   readyForm.reset();
   readyAttempts = 0;
@@ -484,9 +652,11 @@ playAgain.addEventListener("click", () => {
   resetFormState(quoteQuizForm, quoteFeedback, ".question-row");
   resetFormState(photoQuizForm, photoFeedback, ".photo-card");
   resetFormState(eliaQuizForm, eliaFeedback, ".question-row");
+  buildPuzzle();
   refreshPhotoZoom();
   codeSlots.querySelectorAll("span").forEach((slot) => {
     slot.textContent = "?";
+    slot.classList.remove("revealed");
   });
   showScreen("intro");
 });
@@ -494,3 +664,4 @@ playAgain.addEventListener("click", () => {
 buildQuoteQuiz();
 buildPhotoQuiz();
 buildEliaQuiz();
+buildPuzzle();
