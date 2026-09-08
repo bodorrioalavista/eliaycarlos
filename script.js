@@ -624,7 +624,7 @@ readyForm.addEventListener("submit", (event) => {
       "Creemos que Carlos está preparado, pero Elia... ¿estás realmente preparada? Creemos que sí, por lo que deberias decirnos algo así como noski.",
       "Lleváis muchos intentos ya... ¿Tal vez si lo pensáis en inglés?.",
       "Mmmmmm... ¿Qué tal si nos lo traducís del inglés?.",
-      "Venga ya, que no es tan difícil... ¿Qué tal os va un ferri?.",
+      "Venga ya, que no es tan difícil... ¿Qué tal os va un ferry?.",
       "noski baietz?.",
       "pedid ayuda... ¿qué tal si le preguntáis a Izaskun, que es la que más sabe de esto?."
     ];
