@@ -219,9 +219,12 @@ const checkPuzzle = document.querySelector("#checkPuzzle");
 const finalCode = document.querySelector("#finalCode");
 const codeSlots = document.querySelector("#codeSlots");
 const playAgain = document.querySelector("#playAgain");
+const sendFriendsAway = document.querySelector("#mierda");
+const progressStorageKey = "elia-carlos-escape-room-progress";
 let readyAttempts = 0;
 let photoAttempts = 0;
 let selectedPuzzlePiece = null;
+let restoringProgress = false;
 
 const screenMeta = {
   intro: ["Entrada", "0 / 6"],
@@ -230,7 +233,8 @@ const screenMeta = {
   photoQuiz: ["Prueba 2", "3 / 6"],
   eliaQuiz: ["Prueba 3", "4 / 6"],
   puzzleQuiz: ["Prueba 4", "5 / 6"],
-  final: ["Codigo", "6 / 6"]
+  final: ["Codigo", "6 / 6"],
+  farewell: ["Misión cumplida", "6 / 6"]
 };
 
 function normalize(value) {
@@ -250,6 +254,128 @@ function showScreen(name) {
   stepKicker.textContent = kicker;
   progressText.textContent = progress;
   document.querySelector(".game-panel").scrollTop = 0;
+  saveProgress();
+}
+
+function getPuzzlePositions() {
+  return [...puzzleBoard.querySelectorAll(".puzzle-piece")]
+    .sort((first, second) => Number(first.dataset.target) - Number(second.dataset.target))
+    .map((piece) => Number(piece.dataset.position));
+}
+
+function saveProgress() {
+  if (restoringProgress) {
+    return;
+  }
+
+  const activeScreen = document.querySelector(".screen.active")?.dataset.screen || "intro";
+  const progress = {
+    screen: activeScreen,
+    readyAnswer: readyAnswer.value,
+    readyAttempts,
+    photoAttempts,
+    quoteAnswers: [...quoteQuizForm.querySelectorAll("select")].map((select) => select.value),
+    photoAnswers: [...photoQuizForm.querySelectorAll("select")].map((select) => select.value),
+    eliaAnswers: [...eliaQuizForm.querySelectorAll("input")].map((input) => input.value),
+    puzzlePositions: getPuzzlePositions()
+  };
+
+  localStorage.setItem(progressStorageKey, JSON.stringify(progress));
+}
+
+function restorePuzzlePositions(positions) {
+  const pieces = [...puzzleBoard.querySelectorAll(".puzzle-piece")];
+  const totalPieces = gameConfig.puzzle.rows * gameConfig.puzzle.columns;
+
+  if (!Array.isArray(positions) || positions.length !== totalPieces) {
+    return;
+  }
+
+  const validPositions = positions.every(
+    (position) => Number.isInteger(position) && position >= 0 && position < totalPieces
+  );
+  const uniquePositions = new Set(positions).size === totalPieces;
+
+  if (!validPositions || !uniquePositions) {
+    return;
+  }
+
+  pieces.forEach((piece) => {
+    const position = positions[Number(piece.dataset.target)];
+    piece.dataset.position = position;
+    piece.style.order = position;
+  });
+}
+
+function restoreProgress() {
+  const savedValue = localStorage.getItem(progressStorageKey);
+
+  if (!savedValue) {
+    return;
+  }
+
+  let progress;
+  try {
+    progress = JSON.parse(savedValue);
+  } catch {
+    localStorage.removeItem(progressStorageKey);
+    return;
+  }
+
+  if (!progress || !screenMeta[progress.screen]) {
+    return;
+  }
+
+  restoringProgress = true;
+  readyAnswer.value = progress.readyAnswer || "";
+  readyAttempts = Number.isInteger(progress.readyAttempts) ? progress.readyAttempts : 0;
+  photoAttempts = Number.isInteger(progress.photoAttempts) ? progress.photoAttempts : 0;
+
+  [quoteQuizForm, photoQuizForm].forEach((form, formIndex) => {
+    const answers = formIndex === 0 ? progress.quoteAnswers : progress.photoAnswers;
+    if (!Array.isArray(answers)) {
+      return;
+    }
+    [...form.querySelectorAll("select")].forEach((select, index) => {
+      select.value = answers[index] || "";
+    });
+  });
+
+  if (Array.isArray(progress.eliaAnswers)) {
+    [...eliaQuizForm.querySelectorAll("input")].forEach((input, index) => {
+      input.value = progress.eliaAnswers[index] || "";
+    });
+  }
+
+  restorePuzzlePositions(progress.puzzlePositions);
+  refreshPhotoZoom();
+
+  const completedScreens = ["photoQuiz", "eliaQuiz", "puzzleQuiz", "final", "farewell"];
+  const screenIndex = completedScreens.indexOf(progress.screen);
+  if (screenIndex >= 0) {
+    for (let index = 0; index <= Math.min(screenIndex, 2); index += 1) {
+      revealCodeDigit(index);
+    }
+  }
+  if (progress.screen === "final" || progress.screen === "farewell") {
+    revealCodeDigit(3);
+    revealCode();
+  }
+
+  showScreen(progress.screen);
+  restoringProgress = false;
+  saveProgress();
+}
+
+function resetSavedProgressFromUrl() {
+  const resetRequested = new URLSearchParams(window.location.search).get("reset") === "1";
+
+  if (!resetRequested) {
+    return;
+  }
+
+  localStorage.removeItem(progressStorageKey);
+  window.history.replaceState({}, document.title, window.location.pathname);
 }
 
 function answerOptions() {
@@ -399,6 +525,7 @@ function swapPuzzlePieces(firstPiece, secondPiece) {
   secondPiece.dataset.position = firstPosition;
   firstPiece.style.order = secondPosition;
   secondPiece.style.order = firstPosition;
+  saveProgress();
 }
 
 function clearPuzzleSelection() {
@@ -514,8 +641,8 @@ readyForm.addEventListener("submit", (event) => {
 
 quoteQuizForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const correctCount = gameConfig.quoteQuestions.length;
-  //const correctCount = checkAnswers(quoteQuizForm, gameConfig.quoteQuestions, ".question-row");
+  //const correctCount = gameConfig.quoteQuestions.length;
+  const correctCount = checkAnswers(quoteQuizForm, gameConfig.quoteQuestions, ".question-row");
 
   if (correctCount === gameConfig.quoteQuestions.length) {
     quoteFeedback.textContent = "";
@@ -529,8 +656,8 @@ quoteQuizForm.addEventListener("submit", (event) => {
 
 photoQuizForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const correctCount = gameConfig.photoQuestions.length;
-  //const correctCount = checkAnswers(photoQuizForm, gameConfig.photoQuestions, ".photo-card");
+  //const correctCount = gameConfig.photoQuestions.length;
+  const correctCount = checkAnswers(photoQuizForm, gameConfig.photoQuestions, ".photo-card");
 
   if (correctCount === gameConfig.photoQuestions.length) {
     photoFeedback.textContent = "";
@@ -546,8 +673,8 @@ photoQuizForm.addEventListener("submit", (event) => {
 
 eliaQuizForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  //const correctCount = checkEliaAnswers();
-  const correctCount = gameConfig.eliaQuestions.length;
+  const correctCount = checkEliaAnswers();
+  //const correctCount = gameConfig.eliaQuestions.length;
 
   if (correctCount === gameConfig.eliaQuestions.length) {
     eliaFeedback.textContent = "";
@@ -561,16 +688,19 @@ eliaQuizForm.addEventListener("submit", (event) => {
 
 resetQuoteAnswers.addEventListener("click", () => {
   resetFormState(quoteQuizForm, quoteFeedback, ".question-row");
+  saveProgress();
 });
 
 resetPhotoAnswers.addEventListener("click", () => {
   photoAttempts = 0;
   resetFormState(photoQuizForm, photoFeedback, ".photo-card");
   refreshPhotoZoom();
+  saveProgress();
 });
 
 resetEliaAnswers.addEventListener("click", () => {
   resetFormState(eliaQuizForm, eliaFeedback, ".question-row");
+  saveProgress();
 });
 
 puzzleBoard.addEventListener("dragstart", (event) => {
@@ -630,6 +760,7 @@ puzzleBoard.addEventListener("click", (event) => {
 
 shufflePuzzle.addEventListener("click", () => {
   buildPuzzle();
+  saveProgress();
 });
 
 checkPuzzle.addEventListener("click", () => {
@@ -642,9 +773,15 @@ checkPuzzle.addEventListener("click", () => {
   }
 
   puzzleFeedback.textContent = "Aun no encaja. Revisad las esquinas, los bordes y los detalles de la foto.";
+  saveProgress();
+});
+
+sendFriendsAway.addEventListener("click", () => {
+  showScreen("farewell");
 });
 
 playAgain.addEventListener("click", () => {
+  localStorage.removeItem(progressStorageKey);
   readyForm.reset();
   readyAttempts = 0;
   photoAttempts = 0;
@@ -665,3 +802,11 @@ buildQuoteQuiz();
 buildPhotoQuiz();
 buildEliaQuiz();
 buildPuzzle();
+
+[readyAnswer, quoteQuizForm, photoQuizForm, eliaQuizForm].forEach((element) => {
+  element.addEventListener("input", saveProgress);
+  element.addEventListener("change", saveProgress);
+});
+
+resetSavedProgressFromUrl();
+restoreProgress();
